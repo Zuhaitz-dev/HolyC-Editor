@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Interactive HolyC Editor</title>
+
+    <!-- CodeMirror Core and ALL Theme CSS files -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/theme/material-darker.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/theme/dracula.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/theme/solarized.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/addon/dialog/dialog.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/addon/hint/show-hint.css">
+
+    <!-- Link to your new external stylesheet -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <script>
+      // This small script remains inline to prevent a "flash" of the wrong theme on page load.
+      (function() {
+        const theme = localStorage.getItem('holyc-editor-theme') || 'material-darker';
+        document.body.className = 'theme-' + theme.replace(' ', '-');
+      })();
+    </script>
+
+    <div class="app-container">
+        <div class="sidebar">
+            <img id="logo" src="holyc.svg" alt="HolyC Editor Logo">
+            <div class="sidebar-group">
+                <h4>Actions</h4>
+                <button id="format-button">Format Code</button>
+                <button id="upload-button">Upload File</button>
+                <button id="download-button">Download Code</button>
+            </div>
+            
+            <div class="sidebar-group">
+                <h4>Settings</h4>
+                <label for="theme-selector" style="font-size:14px; color:inherit; margin-bottom:5px; display:block;">Theme</label>
+                <select id="theme-selector">
+                    <option value="material-darker">Material Darker</option>
+                    <option value="dracula">Dracula</option>
+                    <option value="solarized light">Solarized Light</option>
+                </select>
+            </div>
+
+            <div class="sidebar-group">
+                <h4>Features</h4>
+                <ul class="feature-list">
+                    <li>Syntax Highlighting</li>
+                    <li>Code Autocomplete<kbd>Ctrl+Space</kbd></li>
+                    <li>Find & Replace<kbd>Ctrl+F</kbd></li>
+                    <li>Smart Snippets & Brackets</li>
+                    <li>Auto-saves to Browser</li>
+                </ul>
+            </div>
+            
+            <div class="sidebar-group">
+                <h4>Resources</h4>
+                <a href="https://holyc-lang.com/" target="_blank" rel="noopener noreferrer" class="resource-link">HolyC Documentation</a>
+                <a href="https://templeos.net/" target="_blank" rel="noopener noreferrer" class="resource-link">TempleOS Foundation</a>
+            </div>
+        </div>
+        <div class="editor-wrapper">
+            <input type="file" id="file-input" style="display: none;" accept=".HC,.hc">
+
+            <div class="editor-title-bar">
+                <input type="text" id="filename-input" class="filename-input" value="main">
+                <span class="file-extension">.HC</span>
+            </div>
+
+            <textarea id="holyc-editor">
+I64 AddNumbers(I64 a, I64 b) {
+    return a + b;
+}
+
+I32 main() {
+    I64 num1 = 10;
+    I64 num2 = 25;
+    I64 result;
+    U8* greeting = "Hello from HolyC!";
+
+    "%s\n", greeting;
+
+    result = AddNumbers(num1, num2);
+
+    "The sum of %d and %d is: %d\n", num1, num2, result;
+    "5 times 8 is: %d\n", 5 * 8;
+
+    return 0;
+}
+</textarea>
+
+            <div class="status-bar">
+                <span id="status-line-col">Ln 1, Col 1</span>
+                <span id="status-total-lines">30 Lines</span>
+                <span id="status-char-count">330 Chars</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/addon/mode/simple.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.14.7/beautify.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/addon/dialog/dialog.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/addon/search/searchcursor.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/addon/search/search.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/addon/edit/matchbrackets.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/addon/hint/show-hint.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/addon/hint/anyword-hint.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/addon/edit/closebrackets.js"></script>
+
+    <!-- Link to your new external JavaScript file -->
+    <script src="js/script.js" defer></script>
+</body>
+</html>
