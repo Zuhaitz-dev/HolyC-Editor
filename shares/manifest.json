@@ -1,0 +1,22 @@
+[
+  {
+    "name": "Hello World Example",
+    "file": "HelloWorld.HC"
+  },
+  {
+    "name": "Pointers Example",
+    "file": "Pointers.HC"
+  },
+  {
+    "name": "Strings Example",
+    "file": "Strings.HC"
+  },
+  {
+    "name": "Union Example",
+    "file": "Union.HC"
+  },
+  {
+    "name": "Add Numbers Example",
+    "file": "AddNumbers.HC"
+  }
+]
