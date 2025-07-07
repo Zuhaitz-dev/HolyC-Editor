@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <title>Interactive HolyC Editor</title>
 
-    <!-- CodeMirror Core and ALL Theme CSS files -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/codemirror.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/theme/material-darker.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/theme/dracula.min.css">
@@ -12,16 +11,15 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/addon/dialog/dialog.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/addon/hint/show-hint.css">
 
-    <!-- Link to your new external stylesheet -->
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <script>
-      // This small script remains inline to prevent a "flash" of the wrong theme on page load.
-      (function() {
-        const theme = localStorage.getItem('holyc-editor-theme') || 'material-darker';
-        document.body.className = 'theme-' + theme.replace(' ', '-');
-      })();
+        // Immediately invoked function to set initial theme from localStorage
+        (function() {
+            const theme = localStorage.getItem('holyc-editor-theme') || 'material-darker';
+            document.body.className = 'theme-' + theme.replace(' ', '-');
+        })();
     </script>
 
     <div class="app-container">
@@ -41,6 +39,13 @@
                     <option value="material-darker">Material Darker</option>
                     <option value="dracula">Dracula</option>
                     <option value="solarized light">Solarized Light</option>
+                </select>
+            </div>
+
+            <div class="sidebar-group">
+                <h4>Samples</h4>
+                <select id="sample-selector">
+                    <option value="" disabled selected>Load a sample...</option>
                 </select>
             </div>
 
@@ -99,7 +104,6 @@ I32 main() {
         </div>
     </div>
 
-    <!-- Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/codemirror.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/addon/mode/simple.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.14.7/beautify.min.js"></script>
@@ -111,7 +115,6 @@ I32 main() {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/addon/hint/anyword-hint.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/addon/edit/closebrackets.js"></script>
 
-    <!-- Link to your new external JavaScript file -->
-    <script src="js/script.js" defer></script>
+    <script src="script.js"></script>
 </body>
 </html>
