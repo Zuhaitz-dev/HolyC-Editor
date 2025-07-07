@@ -5,7 +5,7 @@ function holyCHint(editor) {const cursor = editor.getCursor();const token = edit
 
 // 2. Define the custom language mode.
 CodeMirror.defineSimpleMode("holyc", { start: [{ regex: /\/\/.*/, token: "comment" }, { regex: /\/\*/, token: "comment", next: "comment" }, { regex: /^\s*#\s*\w+/, token: "meta" }, { regex: /"(?:[^\\]|\\.)*?(?:"|$)/, token: "string" }, { regex: /'(?:[^\\]|\\.)*?(?:'|$)/, token: "string" }, { regex: /\b(U0|I8|U8|I16|U16|I32|U32|I64|U64|F64|Bool|class|union|DU8|DU16|DU32|DU64)\b/, token: "type" }, { regex: /\b(break|case|continue|default|do|else|for|goto|if|return|switch|while|throw|try|catch|extern|public|asm|const|static|inline|sizeof)\b/, token: "keyword" }, { regex: /\b(MOV|CALL|PUSH|LEAVE|RET|SUB|SHR|ADD|RETF|CMP|JNE|BTS|INT|XOR|JC|JZ|LOOP|POP|TEST|SHL|ADC|SBB|JMP|INC)\b/, token: "builtin" }, { regex: /\b(RAX|RCX|RDX|RBX|RSP|RBP|RSI|RDI|EAX|ECX|EDX|EBX|ESP|EBP|ESI|EDI|AX|CX|DX|BX|SP|BP|SI|DI|SS|CS|DS|ES|FS|GS|CH)\b/, token: "variable-2" }, { regex: /\b(NULL|TRUE|FALSE|ON|OFF)\b/, token: "atom" }, { regex: /\b(?:0x[a-f\d]+|[-+]?(?:\.\d+|\d+\.?\d*)(?:e[-+]?\d+)?)\b/i, token: "number" }, { regex: /[a-zA-Z_]\w*/, token: "variable" }, { regex: /[-+/*=<>!&|~^%]+/, token: "operator" }, { regex: /[{}()\[\],;.]/, token: "punctuation" }], comment: [{ regex: /.*?\*\//, token: "comment", next: "start" }, { regex: /.*/, token: "comment" }], meta: { electricChars: "}" }});
-
+ 
 // 3. Get DOM elements and saved theme.
 const themeSelector = document.getElementById('theme-selector');
 const savedTheme = localStorage.getItem('holyc-editor-theme') || 'material-darker';
@@ -16,7 +16,7 @@ themeSelector.value = savedTheme;
 const statusLineCol = document.getElementById('status-line-col');
 const statusTotalLines = document.getElementById('status-total-lines');
 const statusCharCount = document.getElementById('status-char-count');
-
+ 
 // 4. Initialize the editor.
 var editor = CodeMirror.fromTextArea(document.getElementById("holyc-editor"), {
     mode: "holyc", theme: savedTheme, lineNumbers: true, 
@@ -38,7 +38,7 @@ function loadEditorState() {
     if (savedCode !== null) { editor.setValue(savedCode); }
     if (savedFilename !== null) { filenameInput.value = savedFilename; }
 }
-
+ 
 loadEditorState();
 
 // 6. Theme switcher logic.
@@ -64,7 +64,7 @@ updateStatusBar();
 
 // 8. Attach other event listeners.
 document.getElementById('format-button').addEventListener('click', () => { const currentCode = editor.getValue(); const cursorPos = editor.getCursor(); const options = { indent_size: 4, space_in_empty_paren: true, brace_style: 'expand' }; editor.setValue(js_beautify(currentCode, options)); editor.setCursor(cursorPos); });
-
+ 
 const fileInput = document.getElementById('file-input');
 document.getElementById('upload-button').addEventListener('click', () => fileInput.click());
 fileInput.addEventListener('change', (event) => { 
@@ -102,10 +102,63 @@ const markUnsavedAndTriggerSave = () => {
 
 editor.on("change", markUnsavedAndTriggerSave);
 filenameInput.addEventListener('input', markUnsavedAndTriggerSave);
-
+ 
 window.addEventListener('beforeunload', (event) => {
     if (document.body.classList.contains('has-unsaved-changes')) {
         event.preventDefault();
         event.returnValue = '';
     }
 });
+
+// 10. Load and handle samples
+const sampleSelector = document.getElementById('sample-selector');
+ 
+async function populateSamples() {
+    try {
+        // Fetch using a RELATIVE path (no leading slash) to be portable.
+        const response = await fetch('shares/manifest.json');
+        if (!response.ok) throw new Error('Network response was not ok.');
+        const samples = await response.json();
+
+        samples.forEach(sample => {
+            const option = document.createElement('option');
+            option.value = sample.file;
+            option.textContent = sample.name;
+            sampleSelector.appendChild(option);
+        });
+    } catch (error) {
+        console.error('Failed to load samples manifest:', error);
+        const option = document.createElement('option');
+        option.textContent = 'Could not load samples';
+        option.disabled = true;
+        sampleSelector.appendChild(option);
+    }
+}
+
+sampleSelector.addEventListener('change', async (event) => {
+    const sampleFile = event.target.value;
+    if (!sampleFile) return;
+
+    const confirmed = confirm('Loading a sample will overwrite your current code. Are you sure?');
+    if (confirmed) {
+        try {
+            // Fetch using a RELATIVE path (no leading slash) to be portable.
+            const response = await fetch(`shares/${sampleFile}`);
+            if (!response.ok) throw new Error(`Could not fetch ${sampleFile}`);
+            const code = await response.text();
+            
+            editor.setValue(code);
+            filenameInput.value = sampleFile.replace(/\.(hc|HC)$/, '');
+            
+            saveEditorState(); 
+        } catch (error) {
+            console.error('Error loading sample code:', error);
+            alert('Failed to load the selected sample.');
+        }
+    }
+    
+    event.target.selectedIndex = 0;
+});
+
+// Populate the samples dropdown on page load
+document.addEventListener('DOMContentLoaded', populateSamples);
